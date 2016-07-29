@@ -1,0 +1,8 @@
+.*
+!.gitignore
+*.iml
+/bin
+/pkg
+/vendor/src/github.com/smartystreets/goconvey/web/client/reports/*
+/vendor/pkg
+*.rdb

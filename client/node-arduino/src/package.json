@@ -1,0 +1,20 @@
+{
+  "name": "arduino-client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Arduino client for Simon Says",
+  "scripts": {
+    "start": "node client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "grpc":  "0.12.0",
+    "keypress": "0.2.1",
+    "johnny-five": "0.9.19",
+    "chalk": "1.1.1"
+  },
+  "license": "Apache-2.0"
+}

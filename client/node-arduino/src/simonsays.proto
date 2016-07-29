@@ -1,0 +1,82 @@
+/*
+	Copyright 2016, Google, Inc.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+
+syntax = "proto3";
+
+package simonsays;
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.simonsays";
+option java_outer_classname = "SimonSays";
+
+/*
+    The Simon Says service.
+    Allows you to actually play the game.
+*/
+service SimonSays {
+    /*
+    Game process is the following:
+
+    A Join Request should be sent to the game. This tells it
+    to join a game (or start a new one if one isn't already waiting on a game).
+
+    The Response stream will send through a BEGIN Response.State to let you know that
+    the Game has been started.
+
+    When the player recieves a START_TURN response, the server can take your input for the turn.
+
+    When the player recieves a STOP_TURN response, the serer is no longer taking input for the turn.
+
+    A WIN state says you won the game. A LOSE state means that you got an input wrong, and have lost.
+
+    To send input, send a Request with an event type of Color.
+
+    When you recieve a Response of type Color, then light up that colour.
+    */
+    rpc Game(stream Request) returns (stream Response) {}
+}
+
+message Request {
+    //A Player of the Simon says game.
+    message Player {
+        string id = 1;
+    }
+
+    oneof event {
+        Player join = 1;
+        Color press = 2;
+    }
+}
+
+message Response {
+    enum State {
+        BEGIN = 0;
+        START_TURN = 1;
+        STOP_TURN = 2;
+        WIN = 3;
+        LOSE = 4;
+    }
+    oneof event {
+        State turn = 1;
+        Color lightup = 2;
+    }
+}
+
+enum Color {
+    RED  = 0;
+    GREEN = 1;
+    YELLOW = 2;
+    BLUE = 3;
+}
