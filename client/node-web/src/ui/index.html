@@ -1,0 +1,68 @@
+<!--
+  Copyright 2016, Google, Inc.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simon Says - gRPC</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    </head>
+  <body>
+    <div class="container" style="margin-top:50px;">
+      <div class="row">
+        <div class="col-md-6">
+          <button type="button" class="btn btn-warning btn-lg btn-block" id='YELLOW' onclick="clickColor('YELLOW')">Yellow</button>
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="btn btn-success btn-lg btn-block" id='GREEN' onclick="clickColor('GREEN')">Green</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <button type="button" class="glow btn btn-primary btn-lg btn-block" id='BLUE' onclick="clickColor('BLUE')">Blue</button>
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="btn btn-danger btn-lg btn-block" id='RED' onclick="clickColor('RED')"> Red</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center h2" style="margin-top:30px;" id="message"></div>
+      </div>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+      var socket = io();
+      function clickColor(color){
+        socket.emit('click', color);
+      }
+      socket.on('lightup', function(color){
+        document.getElementById(color).style.visibility= 'hidden';
+        setTimeout(function(){ document.getElementById(color).style.visibility= 'visible'; }, 200);
+      });
+      socket.on('message', function(message){
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(message + " "));
+        document.getElementById('message').appendChild(div);
+        setTimeout(function(){ div.remove(); }, 2000);
+      });
+      socket.on('disconnect', function () {
+        var text = document.createTextNode(" Game Over, please close the page! ");
+        document.getElementById('message').appendChild(text);
+      });
+    </script>
+  </body>
+</html>

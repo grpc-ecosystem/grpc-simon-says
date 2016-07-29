@@ -1,0 +1,10 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "UI for gRPC demo",
+  "main": "ui.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "socket.io": "^1.4.5"
+  }
+}
