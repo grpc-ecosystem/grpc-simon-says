@@ -1,0 +1,37 @@
+{
+  "buttons": {
+    "red":{
+      "led":8,
+      "button":{
+        "pin":9,
+        "invert":false,
+        "isPullup":true
+      }
+    },
+    "green":{
+      "led":4,
+      "button":{
+        "pin":5,
+        "invert":false,
+        "isPullup":true
+      }
+    },
+    "yellow":{
+      "led":2,
+      "button":{
+        "pin":3,
+        "invert":false,
+        "isPullup":true
+      }
+    },
+    "blue":{
+      "led":6,
+      "button":{
+        "pin":7,
+        "invert":false,
+        "isPullup":true
+      }
+    }
+  },
+  "type":"digital"
+}

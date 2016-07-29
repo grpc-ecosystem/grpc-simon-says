@@ -1,0 +1,15 @@
+resources:
+- name: simon-says-server
+  type: container.v1.cluster
+  properties:
+    zone: us-central1-f
+    cluster:
+      name: simon-says
+      description: Server for the Internet Simon Says game!
+      initialNodeCount: 3
+      nodeConfig:
+        oauthScopes:
+          - https://www.googleapis.com/auth/devstorage.read_only
+      masterAuth:
+        username: admin
+        password: supersecret
