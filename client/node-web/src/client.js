@@ -19,182 +19,167 @@
 var events = require('events');
 var ui_events = new events.EventEmitter();
 var ui = require('./ui/ui');
-
-var util = require('util');
-var chalk = require('chalk');
-var grpc = require('grpc');
-var keypress = require('keypress');
-var game, board;
-var pauseInput = false;
-var hadTurn = false;
-
-//Create a random PlayerID
-var player = {
-  id: 'Player' + Math.floor(Math.random() * 10000)
-};
-
-console.log(player.id);
-
-//Connect to the gRPC server
-var proto = grpc.load('simonsays.proto');
-var client = new proto.simonsays.SimonSays(
-  process.env.server + ':' + process.env.port,
-  grpc.credentials.createInsecure()
-);
-
-startKeyboardCapture();
-console.log('Welcome to Simon Says!');
-newGame();
-
-// Start the UI
 ui.start(processPress, ui_events);
 
-function newGame() {
 
-  // gameStatus is a server stream that registers the player to the server
-  // and gets a stream of game events (BEGIN, START_TURN, END_TURN, WIN, LOSE)
-  game = client.game();
+// chalk is used to color cli text output
+var chalk = require('chalk');
+// grpc interpret protos, server and client tools
+var grpc = require('grpc');
+// keypress is used to work with cli user input
+var keypress = require('keypress');
+// variable to enable/disable user input from the cli
+var pauseInput = false;
 
-  //Join Game
-  var event = {
-    join: player
-  };
-  game.write(event);
+// the game is interactive and will be controlled with keyboard input
+// let's setup the keypress listener
+keypress(process.stdin);
+process.stdin.setRawMode(true);
+process.stdin.resume();
 
-
-  //Keyboard Input
-  process.stdin.on('keypress', function(ch, key) {
+process.stdin.on('keypress', function(ch, key) {
+    // let's make sure we can exit the programm at any point with ctrl + c
     if (key && key.ctrl && key.name == 'c') {
-      process.exit();
+        process.exit();
     }
+    // any other keypress needs to be processed if input isn't paused
     if (!pauseInput) {
-      processPress(key.name);
+        processPress(key.name);
     }
-  });
+});
 
-  //Get Game Events
-  game.on('data', function(event) {
+// Step 1 - parse and load simonsays.proto, all services, endpoints and messages
+// will be available through the proto variable
+var proto = grpc.load('simonsays.proto');
 
-    //Type of event is Color
+// create client connection to SimonSays service
+// use serverip and port from environment
+var client = new proto.simonsays.SimonSays(
+    process.env.server + ":" + process.env.port,
+    grpc.credentials.createInsecure()
+);
+
+console.log('Welcome to Simon Says!');
+
+// Step 2 - open stream channel to game endpoint
+var game = client.game();
+
+// Step 3 - join a game
+// to join a game we need a player with a random ID
+var player = {
+    id: 'Player' + Math.floor(Math.random() * 10000)
+};
+console.log('Joining with player name ' + player.id);
+
+// we need to send a join request to the game stream channel
+// looking at the simonsays.proto this needs to be a message
+// of type Request, with the variable join of type Player
+
+game.write({join:player});
+
+// Step 4 - react to events received on the game stream channel
+// let's use a callback here
+game.on('data', function(event) {
+    // Looking at simonsays.proto there're two types of events
+    // we need to handle
+    // if we receive a lightup event, we need to show the color
+    // event.lightup has the value of the COLOR enum we defined in the proto
     if (event.event == 'lightup') {
-      lightUp(event.lightup);
+        // Step 3.1 - handle lightup events
+        // send a colored text to the console - use chalk.{color}(text)
+        console.log(chalk[event.lightup.toLowerCase()](event.lightup))
+        // and send the event to the UI too
+        ui_events.emit('lightup', event.lightup);
     }
-    //Type of event is Game Sate
     else if (event.event == 'turn') {
-      switch (event.turn) {
-
-        case 'BEGIN':
-          // Join the game
-          var str = 'The game has started';
-          ui_events.emit('message', str);
-          console.log(str);
-          break;
-
-        case 'START_TURN':
-          // Start of turn, enable input
-          hadTurn = true;
-          pauseInput = false;
-          var str = 'Your Turn!';
-          ui_events.emit('message', str);
-          console.log(str);
-          break;
-
-        case 'STOP_TURN':
-          // Player's turn is over, disable input
-          if (hadTurn) {
-            var str = "Nice Job! Now it's the other player's turn";
-            ui_events.emit('message', str);
-            console.log(str);
-          }else {
-            var str = "It's the other player's turn first";
-            ui_events.emit('message', str);
-            console.log(str);
-          }
-          pauseInput = true;
-          break;
-
-        case 'WIN':
-          var str = 'You Win!';
-          ui_events.emit('message', str);
-          console.log(str);
-          break;
-
-        case 'LOSE':
-          var str = 'You Lost!';
-          ui_events.emit('message', str);
-          console.log(str);
-          break;
-      }
+        // Step 3.2 - handle turn state events
+        // Looking at the simonsays.proto there are 5 different states
+        // BEGIN - the game starts
+        // START_TURN - start accepting user input
+        // STOP_TURN - not accepting any user input
+        // WIN - game won
+        // LOSE - game lost
+        switch (event.turn) {
+            case 'BEGIN':
+                // Join the game
+                var msg = 'The game has started \n ' +
+                    'To play the game press the keys y, r, g, b for the \n' +
+                    ' colors yellow, red, green and blue. \n'
+                    'Please wait till it is your turn.';
+                console.log(msg);
+                ui_events.emit('message', 'The game has started');
+                break;
+            case 'START_TURN':
+                // This player's turn, enable input
+                pauseInput = false;
+                var msg = 'Your Turn!';
+                console.log(msg);
+                ui_events.emit('message', msg);
+                break;
+            case 'STOP_TURN':
+                // Others player's turn, disable input
+                pauseInput = true;
+                var msg = 'It is the other players turn!';
+                console.log(msg);
+                ui_events.emit('message', msg);
+                break;
+            case 'WIN':
+                var msg = 'You won! :)';
+                console.log(msg);
+                ui_events.emit('message', msg);
+                break;
+            case 'LOSE':
+                var msg = 'You lost :(';
+                console.log(msg);
+                ui_events.emit('message', msg);
+                break;
+        }
     }
-  });
+});
 
-  game.on('end', function() {
-    var str = 'Thanks for Playing';
-    ui_events.emit('message', str);
-    console.log(str);
-    game.cancel();
+// Step 5 - if the game stream channel is closed, exit the program
+/* REPLACE - handle the closing of the stream channel and exit the program
+  Don’t forget to close the channel from client side too ;)
+*/
+game.on('end', function(event) {
+    console.log('Thank you for playing!');
+    game.end();
     process.exit();
-  });
+});
 
-}
 
-// Light up the color (and print to console)
-function lightUp(color) {
-
-  // Emit the event so the UI can capture it
-  ui_events.emit('lightup', color);
-
-  switch (color) {
-    case 'RED':
-      console.log(chalk.red(color));
-      break;
-    case 'GREEN':
-      console.log(chalk.green(color));
-      break;
-    case 'YELLOW':
-      console.log(chalk.yellow(color));
-      break;
-    case 'BLUE':
-      console.log(chalk.blue(color));
-      break;
-  }
-}
-
-// Processes a input
+// Processes user input from cli
 // Sends the button press to the callback
 function processPress(name) {
-  //Disable Input
-  pauseInput = true;
+    //disable input while we process the pressed key
+    pauseInput = true;
 
-  var color = 'RED';
-  switch (name) {
-    case 'a':
-    case 'RED':
-      color = 'RED';
-      break;
-    case 's':
-    case 'GREEN':
-      color = 'GREEN';
-      break;
-    case 'd':
-    case 'YELLOW':
-      color = 'YELLOW';
-      break;
-    case 'f':
-    case 'BLUE':
-      color = 'BLUE';
-      break;
-  }
+    var color = '';
+    switch (name) {
+        case 'r':
+            color = 'RED';
+            break;
+        case 'g':
+            color = 'GREEN';
+            break;
+        case 'y':
+            color = 'YELLOW';
+            break;
+        case 'b':
+            color = 'BLUE';
+            break;
+        default:
+            console.log(name + ' is not a valid color input. Try again!')
+            break;
+    }
 
-  game.write({press: color});
+    // Step 6 --  send the pressed color to the game stream channel
+    if (color != '') {
+        game.write({press:color});
+    }
 
-  // Avoid accidental double clicks
-  setTimeout(function() {pauseInput = false}, 200);
-}
-
-function startKeyboardCapture() {
-  //Capture the raw input to emulate button presses
-  keypress(process.stdin);
-  process.stdin.setRawMode(true);
-  process.stdin.resume();
+    // To avoid accidental double clicks
+    setTimeout(function() {
+        pauseInput = false
+    }, 100);
 }
