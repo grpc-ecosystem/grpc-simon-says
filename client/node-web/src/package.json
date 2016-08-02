@@ -13,7 +13,8 @@
   "dependencies": {
     "grpc":  "0.12.0",
     "keypress": "0.2.1",
-    "chalk": "1.1.1"
+    "chalk": "1.1.1",
+    "events": "1.1.1"
   },
   "license": "Apache-2.0"
 }

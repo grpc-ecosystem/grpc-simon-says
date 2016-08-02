@@ -46,7 +46,12 @@ Here we can see:
 [Ubiquity Dev Summit](https://ubiquity.withgoogle.com/), 2016
 
 
-## Licence
-Apache 2.0
+## Contributing changes
 
-This is not an official Google Product.
+* See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Licensing
+
+* See [LICENSE](LICENSE)
+
+*This is not an official Google Product.*
