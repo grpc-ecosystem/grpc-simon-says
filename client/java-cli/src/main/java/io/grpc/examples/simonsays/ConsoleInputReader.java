@@ -32,10 +32,16 @@ public class ConsoleInputReader {
 
     private final Scanner scanner;
 
+    /**
+     * Default constructor.
+     */
     public ConsoleInputReader() {
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * Read color from console.
+     */
     public Color readColor() {
         String line = scanner.next();
         Color color = doReadColor(line);
@@ -43,23 +49,38 @@ public class ConsoleInputReader {
         return color;
     }
 
+    /**
+     * Read player name from console.
+     */
     public String readPlayerName() {
         return readString("Player name", DEFAULT_PLAYER_NAME + "-" + new Random().nextInt(10000));
     }
 
+    /**
+     * Read server ip from console.
+     */
     public String readServerIp() {
         return readString("Game Server IP", DEFAULT_SERVER_IP);
     }
 
+    /**
+     * Read server port from console.
+     */
     public int readServerPort() {
         return readInt("Game Server Port", DEFAULT_SERVER_PORT);
     }
 
+    /**
+     * Read an answer for a question with a default value.
+     */
     private String readString(String question, String defaultValue) {
         String line = readLine(question, defaultValue);
         return isNullOrEmpty(line) ? defaultValue : line;
     }
 
+    /**
+     * Read integer for a question with a default value.
+     */
     private int readInt(String question, int defaultValue) {
         try {
             String line = readLine(question, defaultValue);
@@ -68,7 +89,10 @@ public class ConsoleInputReader {
             return defaultValue;
         }
     }
-    
+
+    /**
+     * Read a line for a question with a default value.
+     */
     private String readLine(String question, Object defaultValue) {
         System.out.print(getFormattedQuestion(question, defaultValue));
         String line =  scanner.nextLine();

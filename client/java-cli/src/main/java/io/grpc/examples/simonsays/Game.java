@@ -38,6 +38,9 @@ public class Game {
     private StreamObserver<Request> streamObserver;
     private boolean started;
 
+    /**
+     * Constructor for Game.
+     */
     public Game(ConsoleWindow window,
             SimonSaysGrpc.SimonSaysStub asyncStub) {
         this.window = window;

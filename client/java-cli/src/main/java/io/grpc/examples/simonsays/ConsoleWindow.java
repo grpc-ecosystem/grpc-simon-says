@@ -85,6 +85,9 @@ public class ConsoleWindow {
         AnsiConsole.out.println("+----+----+");
     }
 
+    /**
+     * Print a red highlighted Simon Says cube.
+     */
     private static void printRed() {
         AnsiConsole.out.println(ANSI_RED + "+----+" + ANSI_RESET + "----+");
         AnsiConsole.out.println(ANSI_RED + "|RRRR|" + ANSI_RESET + "    |");
@@ -95,6 +98,9 @@ public class ConsoleWindow {
         AnsiConsole.out.println("+----+----+");
     }
 
+    /**
+     * Print a green highlighted Simon Says cube.
+     */
     private void printGreen() {
         AnsiConsole.out.println("+----" + ANSI_GREEN + "+----+" + ANSI_RESET);
         AnsiConsole.out.println("|    " + ANSI_GREEN + "|GGGG|" + ANSI_RESET);
@@ -105,6 +111,9 @@ public class ConsoleWindow {
         AnsiConsole.out.println("+----+----+");
     }
 
+    /**
+     * Print a blue highlighted Simon Says cube.
+     */
     private void printBlue() {
         AnsiConsole.out.println("+----+----+");
         AnsiConsole.out.println("|    |    |");
@@ -115,6 +124,9 @@ public class ConsoleWindow {
         AnsiConsole.out.println(ANSI_BLUE + "+----+" + ANSI_RESET + "----+");
     }
 
+    /**
+     * Print a yellow highlighted Simon Says cube.
+     */
     private void printYellow() {
         AnsiConsole.out.println("+----+----+");
         AnsiConsole.out.println("|    |    |");
@@ -125,6 +137,9 @@ public class ConsoleWindow {
         AnsiConsole.out.println("+----" + ANSI_YELLOW + "+----+" + ANSI_RESET);
     }
 
+    /**
+     * Clear the screen.
+     */
     private void clearScreen() {
         AnsiConsole.out.print(String.format("\033[2J"));
     }

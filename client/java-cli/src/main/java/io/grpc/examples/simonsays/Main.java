@@ -39,6 +39,9 @@ public class Main {
         main.run();
     }
 
+    /**
+     * Default constructor.
+     */
     public Main() {
         // Create a reader and a window.
         reader = new ConsoleInputReader();
@@ -48,6 +51,9 @@ public class Main {
         LogManager.getLogManager().reset();
     }
 
+    /**
+     * Main run loop.
+     */
     private void run() throws InterruptedException, IOException {
         window.println("Welcome to Simon Says!");
         window.println("First, some setup...");
