@@ -55,14 +55,10 @@ public class Main {
         // Create a game.
         Game game = createGame();
 
-        /**
-         * STEP2: Read player id and join the game with the player.
-         */
-
-        // STEP2a: Read player id.
+        // Read player id.
         String playerId = reader.readPlayerName();
 
-        // STEP2b: Either create a game or join an already waiting player.
+        // Either create a game or join an already waiting player.
         game.join(playerId);
 
         // Block until another player joins.
@@ -83,10 +79,10 @@ public class Main {
     }
 
     /**
-     * STEP1: Create a game. In order to create a game, you need:
+     * Create a game. In order to create a game, you need:
      * 
-     * STEP1a: Read server ip and server port (using reader) and create a ManagedChannel.
-     * STEP1b: Create an async stub using the created ManagedChannel.
+     * Read server ip and server port (using reader) and create a ManagedChannel.
+     * Create an async stub using the created ManagedChannel.
      */
     private Game createGame() {
 
@@ -98,7 +94,7 @@ public class Main {
     }
 
     /**
-     * STEP1a: Read server ip and server port (using reader) and create a ManagedChannel.
+     * Read server ip and server port (using reader) and create a ManagedChannel.
      */
     private ManagedChannel createManagedChannel() {
         String serverIp = reader.readServerIp();
@@ -115,7 +111,7 @@ public class Main {
     }
 
     /**
-     * STEP1b: Create an async stub using the created ManagedChannel.
+     * Create an async stub using the created ManagedChannel.
      */
     private SimonSaysGrpc.SimonSaysStub createAsyncStub(ManagedChannel channel) {
         Log.log(Level.INFO, "Creating an async SimonSaysGrpc stub");

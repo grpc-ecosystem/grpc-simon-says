@@ -47,15 +47,7 @@ public class Game {
     }
 
     /**
-     * STEP4: Implement rest of public methods of Player.
-     * 
-     * STEP4a: Implement joinGame method.
-     * STEP4b: Implement sendColor method. 
-     * STEP4c: Implement isStartedGame method.
-     */
-
-    /**
-     * STEP4a: Send a join game request.
+     * Send a join game request.
      */
     public void join(String playerId) {
         Log.log(Level.INFO, "Joining a game...");
@@ -66,7 +58,7 @@ public class Game {
     }
 
     /**
-     * STEP4b: Send a color.
+     * Send a color.
      */
     public void sendColor(Color color) {
         Log.log(Level.INFO, "Sending color: " + color);
@@ -76,18 +68,14 @@ public class Game {
     }
 
     /**
-     * STEP4c: Return the startedGame boolean.
+     * Return the startedGame boolean.
      */
     public boolean isStarted() {
         return started;
     }
 
     /**
-     * STEP3: Setup stream observer. In order to setup stream observer, you need:
-     * 
-     * STEP3a: Implement handleResponse.
-     * STEP3b: Implement handleLightup.
-     * STEP3c: Implement handleTurn.
+     * Setup stream observer.
      */
     private void setupStreamObserver() {
         Log.log(Level.INFO, "Setting up for game...");
@@ -112,7 +100,7 @@ public class Game {
     }
 
     /**
-     * STEP3a: Handle response value which can either by lightup or turn.
+     * Handle response value which can either by lightup or turn.
      */
     private void handleResponse(Response value) {
         Log.log(Level.INFO, "Response received: " + value.toString());
@@ -130,14 +118,14 @@ public class Game {
     }
 
     /**
-     * STEP3b: Handle lightup event.
+     * Handle lightup event.
      */
     private void handleLightup(Color color) {
         window.printColoredSimonCube(color);
     }
 
     /**
-     * STEP3c: Handle turn event.
+     * Handle turn event.
      */
     private void handleTurn(State state) {
         switch (state) {
