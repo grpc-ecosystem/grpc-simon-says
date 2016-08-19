@@ -1,0 +1,103 @@
+/*
+Copyright 2016 Google Inc. All Rights Reserved.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+
+syntax = "proto3";
+
+package simonsays;
+
+// Controls whether the generated protobuf classes lives in a single
+// file vs. multiple files.
+
+option java_multiple_files = true;
+
+// Outer package for the generated classes.
+
+option java_package = "io.grpc.examples.simonsays";
+
+// In Eclipse, you might need a different out_classname.
+
+//option java_outer_classname = "SimonSaysProto";
+
+
+/*
+    Game process is as follows:
+
+    Player sends a Join Request to the Game. This either adds the Player to an
+    already created Game created by another Player, or start a new Game if there
+    isn't another Player waiting for an opponent.
+
+    The Response stream will send through a BEGIN Response.State to let you know that
+    the Game has started.
+
+    When the Player receives a START_TURN response, the server can take input for the turn.
+
+    When the Player receives a STOP_TURN response, the server is no longer taking input for the turn.
+
+    A WIN state says that Player won the game.
+
+    A LOSE state says that Player got an input wrong and have lost.
+
+    To send input, Player sends a Request with an event type of Color.
+
+    When Player receives a Response of type Color, then light up for that color happens.
+*/
+
+// The Simon Says service. Allows you to actually play the game.
+
+service SimonSays {
+
+    // A bi-directional Request/Response stream for the Game.
+    rpc Game(stream Request) returns (stream Response) {}
+}
+
+
+// Request message sent by the client/player.
+
+message Request {
+
+    // A Player of the Simon says game.
+    message Player {
+        string id = 1;
+    }
+
+    oneof event {
+        Player join = 1;
+        Color press = 2;
+    }
+}
+
+
+// Response message sent by the server.
+
+message Response {
+
+    enum State {
+        BEGIN = 0;
+        START_TURN = 1;
+        STOP_TURN = 2;
+        WIN = 3;
+        LOSE = 4;
+    }
+
+    oneof event {
+        State turn = 1;
+        Color lightup = 2;
+    }
+}
+
+enum Color {
+    RED  = 0;
+    GREEN = 1;
+    YELLOW = 2;
+    BLUE = 3;
+}
