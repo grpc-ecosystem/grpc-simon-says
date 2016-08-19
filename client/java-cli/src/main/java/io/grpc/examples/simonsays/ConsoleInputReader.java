@@ -99,14 +99,23 @@ public class ConsoleInputReader {
         return line;
     }
 
+    /**
+     * Returns the formatted question with a default answer. 
+     */
     private static String getFormattedQuestion(String question, Object defaultValue) {
         return String.format(INPUT_FORMAT, question, defaultValue);
     }
 
+    /**
+     * Null or empty check for the string.
+     */
     private static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
+    /**
+     * Extract color from the input line.
+     */
     private static Color doReadColor(String line) {
         if (line.equalsIgnoreCase("b")) {
             return Color.BLUE;
