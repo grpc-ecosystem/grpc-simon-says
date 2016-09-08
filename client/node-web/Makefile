@@ -12,10 +12,11 @@
 # limitations under the License.
 
 SERVERIP=''
-PORT=50051
+SERVERPORT=50051
+LOCALPORT=8080
 
 install:
 	cd src/ui; npm install; cd ..; npm install
 
 run:
-	cd src; server=$(SERVERIP) port=$(PORT) npm start
+	cd src; server=$(SERVERIP) port=$(SERVERPORT) localport=$(LOCALPORT) npm start
