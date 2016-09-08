@@ -18,7 +18,7 @@
 var http = require('http');
 var fs = require('fs');
 var file = fs.readFileSync(__dirname + '/index.html', 'utf8');
-var port = 8080;
+var port = process.env.localport;
 
 module.exports = {
   start: function(clickHandler, ui_events) {

@@ -157,15 +157,19 @@ function processPress(name) {
     var color = '';
     switch (name) {
         case 'r':
+        case 'RED':
             color = 'RED';
             break;
         case 'g':
+        case 'GREEN':
             color = 'GREEN';
             break;
         case 'y':
+        case 'YELLOW':
             color = 'YELLOW';
             break;
         case 'b':
+        case 'BLUE':
             color = 'BLUE';
             break;
         default:

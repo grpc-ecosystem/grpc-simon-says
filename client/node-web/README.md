@@ -9,10 +9,11 @@ It uses Socket.io to communicate with the browser over websockets.
 - Install dependencies
      - `make install`
 - Run:
-     The port is optional and defaults to 50051.
-     - `make run SERVERIP=<server-ip-here> PORT=<port-ip-here>`
+     - The server port is optional and defaults to 50051.
+     - The local port is optional and defaults to 8080.
+     - `make run SERVERIP=<server-ip-here> SERVERPORT=<port-ip-here> LOCALPORT=<port-ip-here>`
 - Open in browser:
-    To change the serving ip and/or port for the UI modify `src/ui/ui.js`
+     - Replace 8080 with your `LOCALPORT`
      - `localhost:8080`
 
 Notes:
