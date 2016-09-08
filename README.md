@@ -18,6 +18,8 @@ This is the directory for the server implementation
   Client implementations written in a variety of languages and platforms
     - [/java-android](/client/java-android)  
     Client implementation for [Android](https://developer.android.com/studio/index.html) written in [Java](http://java.com).
+    - [/java-cli](/client/java-cli)  
+    Client implementation in [Java](http://java.com) for command line.
     - [/node-arduino](/client/node-arduino)  
     Client impementation in [Node.js](https://nodejs.org/) for [Arduino](https://www.arduino.cc/)
     - [/node-web](/client/node-web)  
@@ -46,7 +48,12 @@ Here we can see:
 [Ubiquity Dev Summit](https://ubiquity.withgoogle.com/), 2016
 
 
-## Licence
-Apache 2.0
+## Contributing changes
 
-This is not an official Google Product.
+* See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Licensing
+
+* See [LICENSE](LICENSE)
+
+*This is not an official Google Product.*

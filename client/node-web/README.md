@@ -1,6 +1,7 @@
 # Web Client for gRPC Simon
 
-This is an implementation of the gRPC Simon client in Node.js that uses a web browser as the input method.
+This is an implementation of the gRPC Simon client in Node.js that uses the command line 
+or a web browser as the input method.
 It uses Socket.io to communicate with the browser over websockets.
 
 ## How to deploy
@@ -8,8 +9,10 @@ It uses Socket.io to communicate with the browser over websockets.
 - Install dependencies
      - `make install`
 - Run:
-     - `make run SERVERIP=<server-ip-here>`
+     The port is optional and defaults to 50051.
+     - `make run SERVERIP=<server-ip-here> PORT=<port-ip-here>`
 - Open in browser:
+    To change the serving ip and/or port for the UI modify `src/ui/ui.js`
      - `localhost:8080`
 
 Notes:

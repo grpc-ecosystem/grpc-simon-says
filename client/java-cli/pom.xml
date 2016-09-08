@@ -1,0 +1,134 @@
+<!--
+Copyright 2016 Google Inc. All Rights Reserved.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>jar</packaging>
+  <groupId>com.google.grpc.samples</groupId>
+  <artifactId>simonsays</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>Simon Says client sample using gRPC and Java</name>
+
+  <properties>
+    <grpcVersion>0.13.2</grpcVersion>
+  </properties>
+
+  <dependencies>
+
+    <!-- gRPC dependency -->
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-all</artifactId>
+      <version>${grpcVersion}</version>
+    </dependency>
+
+    <!-- jansi-project for ANSI support on Windows -->
+     <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>1.13</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+  <extensions>
+
+    <!-- Extension to be able to detect OS via ${os.detected.classifier} -->
+    <extension>
+      <groupId>kr.motd.maven</groupId>
+      <artifactId>os-maven-plugin</artifactId>
+      <version>1.4.1.Final</version>
+    </extension>
+  </extensions>
+
+  <plugins>
+
+    <!-- Plugin to ensure minimum source/target -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+        </configuration>
+    </plugin>
+
+    <!-- Plugin to generate executable JAR -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>2.4.3</version>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>shade</goal>
+          </goals>
+          <configuration>
+            <transformers>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <mainClass>io.grpc.examples.simonsays.Main</mainClass>
+              </transformer>
+            </transformers>
+            <createDependencyReducedPom>false</createDependencyReducedPom>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+
+    <!-- Protobuf plugin to generate classes from protobuf definition -->
+    <plugin>
+      <groupId>org.xolstice.maven.plugins</groupId>
+      <artifactId>protobuf-maven-plugin</artifactId>
+      <version>0.5.0</version>
+      <configuration>
+        <!--
+          The version of protoc must match protobuf-java. If you don't depend on
+          protobuf-java directly, you will be transitively depending on the
+          protobuf-java version that grpc depends on.
+        --> 
+        <pluginId>grpc-java</pluginId>
+
+        <!-- ECLIPSE ONLY: The next two lines might not work in Eclipse because 
+             os.detected.classifier is not recognized in Eclipse. Run "mvn compile" on
+             command line and under "Detecting the operating system and CPU architecture" section,
+             copy os.detected.classifier value and replace it here. As an example, this is what
+             you would have for Mac OS:
+        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpcVersion}:exe:osx-x86_64</pluginArtifact>
+        <protocArtifact>com.google.protobuf:protoc:3.0.0-beta-2:exe:osx-x86_64</protocArtifact>
+        -->
+        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpcVersion}:exe:${os.detected.classifier}</pluginArtifact>
+        <protocArtifact>com.google.protobuf:protoc:3.0.0-beta-2:exe:${os.detected.classifier}</protocArtifact>
+ 
+      </configuration>
+
+      <executions>
+        <execution>
+          <goals>
+            <goal>compile</goal>
+            <goal>compile-custom</goal>
+          </goals>
+        </execution>
+
+      </executions>
+
+    </plugin>
+
+  </plugins>
+
+  </build>
+
+</project>
