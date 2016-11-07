@@ -41,32 +41,23 @@ protobuf {
         // The version of protoc must match protobuf-java. If you don't depend on
         // protobuf-java directly, you will be transitively depending on the
         // protobuf-java version that grpc depends on.
-        artifact = "com.google.protobuf:protoc:3.0.0-beta-2"
+        artifact = "com.google.protobuf:protoc:3.0.0"
     }
     plugins {
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.13.2'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0' // CURRENT_GRPC_VERSION
         }
     }
     generateProtoTasks {
         all().each { task ->
-            task.builtins {
-                javanano {
-                    // Options added to --javanano_out
-                    // Javanano option to skip services.
-                    // Nano doesn't support services.
-                    // See: https://github.com/google/protobuf/tree/master/javanano#nano-generator-options
-                    option 'ignore_services=true'
-                }
-            }
-
             task.plugins {
+                javalite {}
                 grpc {
                     // Options added to --grpc_out
-                    // JavaNano is a special code generator and runtime library designed
-                    // specially for resource-restricted systems, like Android.
-                    // See: https://github.com/google/protobuf/tree/master/javanano
-                    option 'nano=true'
+                    option 'lite'
                 }
             }
         }
@@ -79,7 +70,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
-    compile 'io.grpc:grpc-okhttp:0.13.2'
-    compile 'io.grpc:grpc-protobuf-nano:0.13.2'
-    compile 'io.grpc:grpc-stub:0.13.2'
+    compile 'io.grpc:grpc-okhttp:1.0.0'
+    compile 'io.grpc:grpc-protobuf-lite:1.0.0'
+    compile 'io.grpc:grpc-stub:1.0.0'
 }
