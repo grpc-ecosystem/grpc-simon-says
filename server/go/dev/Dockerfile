@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM grpc/go:latest
+FROM grpc/go:1.0
 
 RUN apt-get update && \
-    apt-get -y install wget curl less unzip python zsh git make openssh-server libapparmor1
+    apt-get -y install wget curl less unzip python zsh git make openssh-server libapparmor1 nano
 
 WORKDIR /
 
@@ -57,6 +57,10 @@ RUN go get -u github.com/kisielk/errcheck
 RUN go get -u github.com/golang/protobuf/protoc-gen-go
 
 WORKDIR /root
+
+#install kubectl visualiser
+RUN git clone https://github.com/saturnism/gcp-live-k8s-visualizer.git
+EXPOSE 8001
 
 ADD startup.sh startup.sh
 RUN chmod +x startup.sh

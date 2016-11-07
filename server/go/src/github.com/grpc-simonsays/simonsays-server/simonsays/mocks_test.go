@@ -103,6 +103,7 @@ func (m *mockStream) Close() {
 }
 
 func (m *mockStream) SendHeader(md metadata.MD) error { return nil }
+func (m *mockStream) SetHeader(md metadata.MD) error  { return nil }
 func (m *mockStream) SetTrailer(md metadata.MD)       {}
 func (m *mockStream) Context() context.Context        { return m.ctx }
 func (m *mockStream) SendMsg(msg interface{}) error   { return nil }

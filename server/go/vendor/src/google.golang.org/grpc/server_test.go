@@ -35,9 +35,14 @@ package grpc
 
 import (
 	"net"
+	"reflect"
 	"strings"
 	"testing"
 )
+
+type emptyServiceServer interface{}
+
+type testServer struct{}
 
 func TestStopBeforeServe(t *testing.T) {
 	lis, err := net.Listen("tcp", "localhost:0")
@@ -57,5 +62,52 @@ func TestStopBeforeServe(t *testing.T) {
 	err = lis.Close()
 	if got, want := ErrorDesc(err), "use of closed network connection"; !strings.Contains(got, want) {
 		t.Errorf("Close() error = %q, want %q", got, want)
+	}
+}
+
+func TestGetServiceInfo(t *testing.T) {
+	testSd := ServiceDesc{
+		ServiceName: "grpc.testing.EmptyService",
+		HandlerType: (*emptyServiceServer)(nil),
+		Methods: []MethodDesc{
+			{
+				MethodName: "EmptyCall",
+				Handler:    nil,
+			},
+		},
+		Streams: []StreamDesc{
+			{
+				StreamName:    "EmptyStream",
+				Handler:       nil,
+				ServerStreams: false,
+				ClientStreams: true,
+			},
+		},
+		Metadata: []int{0, 2, 1, 3},
+	}
+
+	server := NewServer()
+	server.RegisterService(&testSd, &testServer{})
+
+	info := server.GetServiceInfo()
+	want := map[string]ServiceInfo{
+		"grpc.testing.EmptyService": {
+			Methods: []MethodInfo{
+				{
+					Name:           "EmptyCall",
+					IsClientStream: false,
+					IsServerStream: false,
+				},
+				{
+					Name:           "EmptyStream",
+					IsClientStream: true,
+					IsServerStream: false,
+				}},
+			Metadata: []int{0, 2, 1, 3},
+		},
+	}
+
+	if !reflect.DeepEqual(info, want) {
+		t.Errorf("GetServiceInfo() = %+v, want %+v", info, want)
 	}
 }

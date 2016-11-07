@@ -24,7 +24,7 @@
 #     \_/ \__,_|_|  |_|\__,_|_.__/|_|\___|___/
 #
 
-PROJECT=$(shell gcloud config list project | awk 'FNR ==2 { print $$3 }')
+PROJECT?=$(shell gcloud config list project | awk 'FNR ==2 { print $$3 }')
 TAG=gcr.io/$(PROJECT)/server
 PACKAGE_ROOT=github.com/grpc-simonsays/simonsays-server
 

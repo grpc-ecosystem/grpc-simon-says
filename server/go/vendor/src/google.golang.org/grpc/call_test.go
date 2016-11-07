@@ -74,13 +74,14 @@ func (testCodec) String() string {
 }
 
 type testStreamHandler struct {
-	t transport.ServerTransport
+	port string
+	t    transport.ServerTransport
 }
 
 func (h *testStreamHandler) handleStream(t *testing.T, s *transport.Stream) {
 	p := &parser{r: s}
 	for {
-		pf, req, err := p.recvMsg()
+		pf, req, err := p.recvMsg(math.MaxInt32)
 		if err == io.EOF {
 			break
 		}
@@ -106,6 +107,11 @@ func (h *testStreamHandler) handleStream(t *testing.T, s *transport.Stream) {
 			h.t.WriteStatus(s, codes.Internal, "")
 			return
 		}
+		if v == "port" {
+			h.t.WriteStatus(s, codes.Internal, h.port)
+			return
+		}
+
 		if v != expectedRequest {
 			h.t.WriteStatus(s, codes.Internal, strings.Repeat("A", sizeLargeErr))
 			return
@@ -158,9 +164,12 @@ func (s *server) start(t *testing.T, port int, maxStreams uint32) {
 		if err != nil {
 			return
 		}
-		st, err := transport.NewServerTransport("http2", conn, maxStreams, nil)
+		config := &transport.ServerConfig{
+			MaxStreams: maxStreams,
+		}
+		st, err := transport.NewServerTransport("http2", conn, config)
 		if err != nil {
-			return
+			continue
 		}
 		s.mu.Lock()
 		if s.conns == nil {
@@ -170,7 +179,10 @@ func (s *server) start(t *testing.T, port int, maxStreams uint32) {
 		}
 		s.conns[st] = true
 		s.mu.Unlock()
-		h := &testStreamHandler{st}
+		h := &testStreamHandler{
+			port: s.port,
+			t:    st,
+		}
 		go st.HandleStreams(func(s *transport.Stream) {
 			go h.handleStream(t, s)
 		})
@@ -225,7 +237,7 @@ func TestInvokeLargeErr(t *testing.T) {
 	var reply string
 	req := "hello"
 	err := Invoke(context.Background(), "/foo/bar", &req, &reply, cc)
-	if _, ok := err.(rpcError); !ok {
+	if _, ok := err.(*rpcError); !ok {
 		t.Fatalf("grpc.Invoke(_, _, _, _, _) receives non rpc error.")
 	}
 	if Code(err) != codes.Internal || len(ErrorDesc(err)) != sizeLargeErr {
@@ -241,7 +253,7 @@ func TestInvokeErrorSpecialChars(t *testing.T) {
 	var reply string
 	req := "weird error"
 	err := Invoke(context.Background(), "/foo/bar", &req, &reply, cc)
-	if _, ok := err.(rpcError); !ok {
+	if _, ok := err.(*rpcError); !ok {
 		t.Fatalf("grpc.Invoke(_, _, _, _, _) receives non rpc error.")
 	}
 	if got, want := ErrorDesc(err), weirdError; got != want {
@@ -265,5 +277,20 @@ func TestInvokeCancel(t *testing.T) {
 		t.Fatalf("received %d of 100 canceled requests", canceled)
 	}
 	cc.Close()
+	server.stop()
+}
+
+// TestInvokeCancelClosedNonFail checks that a canceled non-failfast RPC
+// on a closed client will terminate.
+func TestInvokeCancelClosedNonFailFast(t *testing.T) {
+	server, cc := setUp(t, 0, math.MaxUint32)
+	var reply string
+	cc.Close()
+	req := "hello"
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := Invoke(ctx, "/foo/bar", &req, &reply, cc, FailFast(false)); err == nil {
+		t.Fatalf("canceled invoke on closed connection should fail")
+	}
 	server.stop()
 }

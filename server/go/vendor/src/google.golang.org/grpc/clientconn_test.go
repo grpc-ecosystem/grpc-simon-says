@@ -37,7 +37,10 @@ import (
 	"testing"
 	"time"
 
+	"golang.org/x/net/context"
+
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/oauth"
 )
 
 const tlsDir = "testdata/"
@@ -62,22 +65,87 @@ func TestTLSDialTimeout(t *testing.T) {
 		conn.Close()
 	}
 	if err != ErrClientConnTimeout {
-		t.Fatalf("grpc.Dial(_, _) = %v, %v, want %v", conn, err, ErrClientConnTimeout)
+		t.Fatalf("Dial(_, _) = %v, %v, want %v", conn, err, ErrClientConnTimeout)
 	}
 }
 
-func TestCredentialsMisuse(t *testing.T) {
-	creds, err := credentials.NewClientTLSFromFile(tlsDir+"ca.pem", "x.test.youtube.com")
+func TestTLSServerNameOverwrite(t *testing.T) {
+	overwriteServerName := "over.write.server.name"
+	creds, err := credentials.NewClientTLSFromFile(tlsDir+"ca.pem", overwriteServerName)
 	if err != nil {
 		t.Fatalf("Failed to create credentials %v", err)
 	}
+	conn, err := Dial("Non-Existent.Server:80", WithTransportCredentials(creds))
+	if err != nil {
+		t.Fatalf("Dial(_, _) = _, %v, want _, <nil>", err)
+	}
+	conn.Close()
+	if conn.authority != overwriteServerName {
+		t.Fatalf("%v.authority = %v, want %v", conn, conn.authority, overwriteServerName)
+	}
+}
+
+func TestDialContextCancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := DialContext(ctx, "Non-Existent.Server:80", WithBlock(), WithInsecure()); err != context.Canceled {
+		t.Fatalf("DialContext(%v, _) = _, %v, want _, %v", ctx, err, context.Canceled)
+	}
+}
+
+// blockingBalancer mimics the behavior of balancers whose initialization takes a long time.
+// In this test, reading from blockingBalancer.Notify() blocks forever.
+type blockingBalancer struct {
+	ch chan []Address
+}
+
+func newBlockingBalancer() Balancer {
+	return &blockingBalancer{ch: make(chan []Address)}
+}
+func (b *blockingBalancer) Start(target string, config BalancerConfig) error {
+	return nil
+}
+func (b *blockingBalancer) Up(addr Address) func(error) {
+	return nil
+}
+func (b *blockingBalancer) Get(ctx context.Context, opts BalancerGetOptions) (addr Address, put func(), err error) {
+	return Address{}, nil, nil
+}
+func (b *blockingBalancer) Notify() <-chan []Address {
+	return b.ch
+}
+func (b *blockingBalancer) Close() error {
+	close(b.ch)
+	return nil
+}
+
+func TestDialWithBlockingBalancer(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	dialDone := make(chan struct{})
+	go func() {
+		DialContext(ctx, "Non-Existent.Server:80", WithBlock(), WithInsecure(), WithBalancer(newBlockingBalancer()))
+		close(dialDone)
+	}()
+	cancel()
+	<-dialDone
+}
+
+func TestCredentialsMisuse(t *testing.T) {
+	tlsCreds, err := credentials.NewClientTLSFromFile(tlsDir+"ca.pem", "x.test.youtube.com")
+	if err != nil {
+		t.Fatalf("Failed to create authenticator %v", err)
+	}
 	// Two conflicting credential configurations
-	if _, err := Dial("Non-Existent.Server:80", WithTransportCredentials(creds), WithTimeout(time.Millisecond), WithBlock(), WithInsecure()); err != ErrCredentialsMisuse {
-		t.Fatalf("Dial(_, _) = _, %v, want _, %v", err, ErrCredentialsMisuse)
+	if _, err := Dial("Non-Existent.Server:80", WithTransportCredentials(tlsCreds), WithBlock(), WithInsecure()); err != errCredentialsConflict {
+		t.Fatalf("Dial(_, _) = _, %v, want _, %v", err, errCredentialsConflict)
+	}
+	rpcCreds, err := oauth.NewJWTAccessFromKey(nil)
+	if err != nil {
+		t.Fatalf("Failed to create credentials %v", err)
 	}
 	// security info on insecure connection
-	if _, err := Dial("Non-Existent.Server:80", WithPerRPCCredentials(creds), WithTimeout(time.Millisecond), WithBlock(), WithInsecure()); err != ErrCredentialsMisuse {
-		t.Fatalf("Dial(_, _) = _, %v, want _, %v", err, ErrCredentialsMisuse)
+	if _, err := Dial("Non-Existent.Server:80", WithPerRPCCredentials(rpcCreds), WithBlock(), WithInsecure()); err != errTransportCredentialsMissing {
+		t.Fatalf("Dial(_, _) = _, %v, want _, %v", err, errTransportCredentialsMissing)
 	}
 }
 
@@ -118,4 +186,5 @@ func testBackoffConfigSet(t *testing.T, expected *BackoffConfig, opts ...DialOpt
 	if actual != *expected {
 		t.Fatalf("unexpected backoff config on connection: %v, want %v", actual, expected)
 	}
+	conn.Close()
 }

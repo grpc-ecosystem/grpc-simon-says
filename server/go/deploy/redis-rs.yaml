@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: redis
+        name: redis
+        version: "3.0.6"
+        visualize: "true"
+    spec:
+      containers:
+      - name: redis
+        image: redis:3.0.6
+        ports:
+        - containerPort: 6379

@@ -2,22 +2,36 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "cloud.google.com/go/compute/metadata",
+			"repository": "https://code.googlesource.com/gocloud",
+			"revision": "9fd7589225cc80551105e3be70902e09710798f8",
+			"branch": "master",
+			"path": "/compute/metadata"
+		},
+		{
+			"importpath": "cloud.google.com/go/internal",
+			"repository": "https://code.googlesource.com/gocloud",
+			"revision": "9fd7589225cc80551105e3be70902e09710798f8",
+			"branch": "master",
+			"path": "/internal"
+		},
+		{
 			"importpath": "github.com/cenkalti/backoff",
 			"repository": "https://github.com/cenkalti/backoff",
-			"revision": "a6030178a585d5972d4d33ce61f4a1fa40eaaed0",
+			"revision": "b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/garyburd/redigo/internal",
 			"repository": "https://github.com/garyburd/redigo",
-			"revision": "b8dc90050f24c1a73a52f107f3f575be67b21b7c",
+			"revision": "80f7de34463b0ed3d7c61303e5619efe1b227f92",
 			"branch": "master",
 			"path": "/internal"
 		},
 		{
 			"importpath": "github.com/garyburd/redigo/redis",
 			"repository": "https://github.com/garyburd/redigo",
-			"revision": "b8dc90050f24c1a73a52f107f3f575be67b21b7c",
+			"revision": "80f7de34463b0ed3d7c61303e5619efe1b227f92",
 			"branch": "master",
 			"path": "/redis"
 		},
@@ -30,9 +44,30 @@
 		{
 			"importpath": "github.com/golang/protobuf/proto",
 			"repository": "https://github.com/golang/protobuf",
-			"revision": "9e6977f30c91c78396e719e164e57f9287fff42c",
+			"revision": "2bc9827a78f95c6665b5fe0abd1fd66b496ae2d8",
 			"branch": "master",
 			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/golang/protobuf/proto/testdata",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "2bc9827a78f95c6665b5fe0abd1fd66b496ae2d8",
+			"branch": "master",
+			"path": "/proto/testdata"
+		},
+		{
+			"importpath": "github.com/golang/protobuf/protoc-gen-go/descriptor",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "2bc9827a78f95c6665b5fe0abd1fd66b496ae2d8",
+			"branch": "master",
+			"path": "/protoc-gen-go/descriptor"
+		},
+		{
+			"importpath": "github.com/golang/protobuf/ptypes/any",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "2bc9827a78f95c6665b5fe0abd1fd66b496ae2d8",
+			"branch": "master",
+			"path": "/ptypes/any"
 		},
 		{
 			"importpath": "github.com/jtolds/gls",
@@ -49,81 +84,68 @@
 		{
 			"importpath": "github.com/smartystreets/assertions",
 			"repository": "https://github.com/smartystreets/assertions",
-			"revision": "40711f7748186bbf9c99977cd89f21ce1a229447",
+			"revision": "2063fd1cc7c975db70502811a34b06ad034ccdf2",
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/smartystreets/goconvey",
+			"importpath": "github.com/smartystreets/goconvey/convey",
 			"repository": "https://github.com/smartystreets/goconvey",
-			"revision": "c53abc99456fa3402dd33c15ee51c3e545e04a3f",
-			"branch": "master"
-		},
-		{
-			"importpath": "golang.org/x/crypto/ssh/terminal",
-			"repository": "https://go.googlesource.com/crypto",
-			"revision": "5bcd134fee4dd1475da17714aac19c0aa0142e2f",
+			"revision": "019319c870f8f1d61dc9c34291abff5cd128b6e8",
 			"branch": "master",
-			"path": "/ssh/terminal"
+			"path": "/convey"
 		},
 		{
 			"importpath": "golang.org/x/net/context",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "dfd9ed699ea197b58a32e0d1dcfa2be66f127ec4",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
 			"branch": "master",
 			"path": "/context"
 		},
 		{
 			"importpath": "golang.org/x/net/http2",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "dfd9ed699ea197b58a32e0d1dcfa2be66f127ec4",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
 			"branch": "master",
 			"path": "/http2"
 		},
 		{
+			"importpath": "golang.org/x/net/idna",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
+			"branch": "master",
+			"path": "/idna"
+		},
+		{
 			"importpath": "golang.org/x/net/internal/timeseries",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "dfd9ed699ea197b58a32e0d1dcfa2be66f127ec4",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
 			"branch": "master",
 			"path": "/internal/timeseries"
 		},
 		{
 			"importpath": "golang.org/x/net/lex/httplex",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "dfd9ed699ea197b58a32e0d1dcfa2be66f127ec4",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
 			"branch": "master",
 			"path": "/lex/httplex"
 		},
 		{
 			"importpath": "golang.org/x/net/trace",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "dfd9ed699ea197b58a32e0d1dcfa2be66f127ec4",
+			"revision": "55a3084c9119aeb9ba2437d595b0a7e9cb635da9",
 			"branch": "master",
 			"path": "/trace"
 		},
 		{
 			"importpath": "golang.org/x/oauth2",
 			"repository": "https://go.googlesource.com/oauth2",
-			"revision": "c406a4cc4ba462e5dc2f16225c5bd9488f9cbe10",
+			"revision": "d5040cddfc0da40b408c9a1da4728662435176a9",
 			"branch": "master"
-		},
-		{
-			"importpath": "google.golang.org/cloud/compute/metadata",
-			"repository": "https://code.googlesource.com/gocloud",
-			"revision": "4da660f59adf463f364fca03a6f8422758101a84",
-			"branch": "master",
-			"path": "/compute/metadata"
-		},
-		{
-			"importpath": "google.golang.org/cloud/internal",
-			"repository": "https://code.googlesource.com/gocloud",
-			"revision": "4da660f59adf463f364fca03a6f8422758101a84",
-			"branch": "master",
-			"path": "/internal"
 		},
 		{
 			"importpath": "google.golang.org/grpc",
 			"repository": "https://github.com/grpc/grpc-go",
-			"revision": "8213ee577a465c1f314d85748fb29e4eeed59baf",
+			"revision": "eddbd11c7ecd001d06777cb87b5ea7af54227907",
 			"branch": "master"
 		}
 	]

@@ -16,7 +16,7 @@ $ go get google.golang.org/grpc
 Prerequisites
 -------------
 
-This requires Go 1.5 or later .
+This requires Go 1.5 or later.
 
 Constraints
 -----------
@@ -28,5 +28,14 @@ See [API documentation](https://godoc.org/google.golang.org/grpc) for package an
 
 Status
 ------
-Beta release
+GA
 
+FAQ
+---
+
+#### Compiling error, undefined: grpc.SupportPackageIsVersion
+
+Please update proto package, gRPC package and rebuild the proto files:
+ - `go get -u github.com/golang/protobuf/{proto,protoc-gen-go}`
+ - `go get -u google.golang.org/grpc`
+ - `protoc --go_out=plugins=grpc:. *.proto`
