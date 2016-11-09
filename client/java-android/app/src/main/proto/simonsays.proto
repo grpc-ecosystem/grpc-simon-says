@@ -20,7 +20,7 @@ package simonsays;
 
 option java_multiple_files = true;
 option java_package = "io.grpc.examples.simonsays";
-option java_outer_classname = "SimonSays";
+option java_outer_classname = "SimonSaysService";
 
 /*
     The Simon Says service.

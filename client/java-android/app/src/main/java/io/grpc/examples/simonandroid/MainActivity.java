@@ -34,10 +34,10 @@ import java.util.Random;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.examples.simonsays.nano.SimonSaysGrpc;
-import io.grpc.examples.simonsays.nano.Request;
-import io.grpc.examples.simonsays.nano.Response;
-import io.grpc.examples.simonsays.nano.SimonSays;
+import io.grpc.examples.simonsays.Color;
+import io.grpc.examples.simonsays.Request;
+import io.grpc.examples.simonsays.Response;
+import io.grpc.examples.simonsays.SimonSaysGrpc;
 import io.grpc.stub.StreamObserver;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,9 +92,9 @@ public class MainActivity extends AppCompatActivity {
     */
     private void joinGame(StreamObserver<Request> requests) {
         Log.i(LOG_TAG, "Joining a game");
-        Request.Player player = new Request.Player();
-        player.id = playerId;
-        Request request = new Request().setJoin(player);
+
+        Request.Player player = Request.Player.newBuilder().setId(playerId).build();
+        Request request = Request.newBuilder().setJoin(player).build();
         sendRequest(request);
     }
 
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     */
     public void onBlue(View view) {
         Log.i(LOG_TAG, "Pressed Blue!");
-        sendPress(SimonSays.BLUE);
+        sendPress(Color.BLUE);
     }
 
     /*
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     */
     public void onRed(View view) {
         Log.i(LOG_TAG, "Pressed Red");
-        sendPress(SimonSays.RED);
+        sendPress(Color.RED);
     }
 
     /*
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     */
     public void onGreen(View view) {
         Log.i(LOG_TAG, "Pressed Green!");
-        sendPress(SimonSays.GREEN);
+        sendPress(Color.GREEN);
     }
 
     /*
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     */
     public void onYellow(View view) {
         Log.i(LOG_TAG, "Pressed Yellow!");
-        sendPress(SimonSays.YELLOW);
+        sendPress(Color.YELLOW);
     }
 
     /*
@@ -193,9 +193,8 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Send a button press
     */
-    private void sendPress(int color) {
-        Request request = new Request();
-        request.setPress(color);
+    private void sendPress(Color color) {
+        Request request = Request.newBuilder().setPress(color).build();
         sendRequest(request);
     }
 
@@ -210,12 +209,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 switch (finalValue.getEventCase()) {
-                    case Response.TURN_FIELD_NUMBER: {
+                    case TURN: {
                         handleTurn(finalValue.getTurn());
                         break;
                     }
 
-                    case Response.LIGHTUP_FIELD_NUMBER: {
+                    case LIGHTUP: {
                         handleLightup(finalValue.getLightup());
                         break;
                     }
@@ -227,30 +226,30 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Handle lightup events
     */
-    private void handleLightup(int lightup) {
+    private void handleLightup(Color lightup) {
         switch (lightup) {
-            case SimonSays.RED: {
+            case RED: {
                 Log.i(LOG_TAG, "Lightup: RED");
                 Button button = (Button) findViewById(R.id.button_red);
                 button.startAnimation(buttonAnimation);
                 break;
             }
 
-            case SimonSays.YELLOW: {
+            case YELLOW: {
                 Log.i(LOG_TAG, "Lightup: YELLOW");
                 Button button = (Button) findViewById(R.id.button_yellow);
                 button.startAnimation(buttonAnimation);
                 break;
             }
 
-            case SimonSays.GREEN: {
+            case GREEN: {
                 Log.i(LOG_TAG, "Lightup: GREEN");
                 Button button = (Button) findViewById(R.id.button_green);
                 button.startAnimation(buttonAnimation);
                 break;
             }
 
-            case SimonSays.BLUE: {
+            case BLUE: {
                 Log.i(LOG_TAG, "Lightup: BLUE");
                 Button button = (Button) findViewById(R.id.button_blue);
                 button.startAnimation(buttonAnimation);
@@ -262,27 +261,27 @@ public class MainActivity extends AppCompatActivity {
     /*
     * Handle turn events
     */
-    private void handleTurn(int turn) {
+    private void handleTurn(Response.State turn) {
         switch (turn) {
-            case Response.BEGIN: {
+            case BEGIN: {
                 Log.i(LOG_TAG, "It's my turn!");
                 Toast.makeText(getApplicationContext(), "Welcome to Simon Says", Toast.LENGTH_SHORT).show();
                 break;
             }
 
-            case Response.START_TURN: {
+            case START_TURN: {
                 Log.i(LOG_TAG, "Starting turn");
                 Toast.makeText(getApplicationContext(), "It's Your Turn.", Toast.LENGTH_SHORT).show();
                 break;
             }
 
-            case Response.STOP_TURN: {
+            case STOP_TURN: {
                 Log.i(LOG_TAG, "Stopping Turn");
                 Toast.makeText(getApplicationContext(), "Other Players Turn...", Toast.LENGTH_SHORT).show();
                 break;
             }
 
-            case Response.WIN: {
+            case WIN: {
                 Log.i(LOG_TAG, "WON!");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("YOU WON :)").setPositiveButton("CLOSE", new DialogInterface.OnClickListener() {
@@ -296,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
 
-            case Response.LOSE: {
+            case LOSE: {
                 Log.i(LOG_TAG, "LOST");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("YOU LOST :(").setPositiveButton("CLOSE", new DialogInterface.OnClickListener() {
