@@ -11,11 +11,11 @@ ZSH_THEME="cloud"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-plugins=(debian git git-extras colored-man zsh_reload dirhistory)
+plugins=(debian kubectl git git-extras colored-man zsh_reload dirhistory)
 
 source $ZSH/oh-my-zsh.sh
 
-#yes, I suck.
+#Nano FTW
 export EDITOR='nano -w'
 
 # The next line updates PATH for the Google Cloud SDK.

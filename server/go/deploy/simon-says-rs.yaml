@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: simon-says
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        role: simon-says-server
+        visualize: "true"
+        name: server
+        uses: redis
+    spec:
+      containers:
+      - name: simon-says
+        image: gcr.io/${PROJECT}/server
+        imagePullPolicy: Always
+        env:
+          - name: REDIS_ADDRESS
+            value: redis:6379
+        ports:
+        - containerPort: 50051

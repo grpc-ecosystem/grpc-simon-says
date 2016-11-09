@@ -24,7 +24,7 @@
 #     \_/ \__,_|_|  |_|\__,_|_.__/|_|\___|___/
 #
 
-PROJECT=$(shell gcloud config list project | awk 'FNR ==2 { print $$3 }')
+PROJECT?=$(shell gcloud config list project | awk 'FNR ==2 { print $$3 }')
 TAG=gcr.io/$(PROJECT)/server-dev
 NAME=simon-says-server-shell
 DOCKER_GID=$(word 3,$(subst :, ,$(shell getent group docker)))
@@ -63,6 +63,7 @@ shell:
 	mkdir -p $(project_path)/.kube
 	docker run --rm \
 		--name=$(NAME) \
+		-p=8001:8001 \
 		-P=true \
 		-e TERM \
 		-e HOST_GID=`id -g` \

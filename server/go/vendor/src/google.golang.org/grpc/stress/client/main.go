@@ -162,7 +162,7 @@ func (s *server) GetAllGauges(in *metricspb.EmptyMessage, stream metricspb.Metri
 	defer s.mutex.RUnlock()
 
 	for name, gauge := range s.gauges {
-		if err := stream.Send(&metricspb.GaugeResponse{Name: name, Value: &metricspb.GaugeResponse_LongValue{gauge.get()}}); err != nil {
+		if err := stream.Send(&metricspb.GaugeResponse{Name: name, Value: &metricspb.GaugeResponse_LongValue{LongValue: gauge.get()}}); err != nil {
 			return err
 		}
 	}
@@ -175,12 +175,12 @@ func (s *server) GetGauge(ctx context.Context, in *metricspb.GaugeRequest) (*met
 	defer s.mutex.RUnlock()
 
 	if g, ok := s.gauges[in.Name]; ok {
-		return &metricspb.GaugeResponse{Name: in.Name, Value: &metricspb.GaugeResponse_LongValue{g.get()}}, nil
+		return &metricspb.GaugeResponse{Name: in.Name, Value: &metricspb.GaugeResponse_LongValue{LongValue: g.get()}}, nil
 	}
 	return nil, grpc.Errorf(codes.InvalidArgument, "gauge with name %s not found", in.Name)
 }
 
-// createGauge creates a guage using the given name in metrics server.
+// createGauge creates a gauge using the given name in metrics server.
 func (s *server) createGauge(name string) *gauge {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
